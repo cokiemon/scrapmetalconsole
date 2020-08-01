@@ -38,7 +38,17 @@ namespace scrapmetalconsole
             using (var page = await browser.NewPageAsync())
             {
                 string aliPageAddress = "https://www.aliexpress.com/item/4000366605357.html";
-                await page.GoToAsync(aliPageAddress);
+
+                try
+                {
+                    await page.GoToAsync(aliPageAddress);
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    Environment.Exit(1);
+                }
 
                 // Wait for the page to load.
                 //var resultsSelector = ".gsc-results .gsc-thumbnail-inside a.gs-title";
@@ -54,6 +64,8 @@ namespace scrapmetalconsole
                 ProductSku productSku = new ProductSku(productSkuHandle);
                 await productSku.Parse();
             }
+
+            Environment.Exit(0);
         }
 
         static async Task<ProductPrice> GetProductPrice(Page page)

@@ -84,6 +84,8 @@ namespace scrapmetalconsole
             var skuPropertyItemsSelector = @"ul > li";
             var skuPropertyItemsHandle = await ElementHandle.QuerySelectorAllAsync(skuPropertyItemsSelector);
 
+            // TODO: Try to get li above to scheck for selected???
+
             foreach (var itemHandle in skuPropertyItemsHandle)
             {
                 // For debug purposes only.
