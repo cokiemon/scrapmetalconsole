@@ -45,7 +45,7 @@ namespace scrapmetalconsole
             }
 
             // Try to check the current handle class name.
-            string className = await getElementHandleClassName(ElementHandle);
+            string className = await ElementHandle.GetClassNameAsync();
 
             if (className != "sku-property")
             {
@@ -69,7 +69,7 @@ namespace scrapmetalconsole
             }
 
             // Try to check the current handle class name.
-            string className = await getElementHandleClassName(ElementHandle);
+            string className = await ElementHandle.GetClassNameAsync();
 
             if (className != "sku-property")
             {
@@ -87,7 +87,7 @@ namespace scrapmetalconsole
             foreach (var itemHandle in skuPropertyItemsHandle)
             {
                 // For debug purposes only.
-                //Debug.WriteLine($"itemHandle innerHTML = {await getElementHandleInnerHtml(itemHandle)}");
+                Debug.WriteLine($"itemHandle innerHTML = {await itemHandle.GetInnerHtmlAsync()}");
 
                 SkuPropertyItemFactory factory = new ConcreteSkuPropertyItemFactory();
                 skuPropertyList.Add(await factory.CreateSkuPropertyItem(itemHandle));
@@ -96,15 +96,6 @@ namespace scrapmetalconsole
             PropertyList = skuPropertyList;
 
             return PropertyList;
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private static async Task<string> getElementHandleClassName(ElementHandle handle)
-        {
-            return await handle.EvaluateFunctionAsync<string>("e => e.className");
         }
 
         #endregion

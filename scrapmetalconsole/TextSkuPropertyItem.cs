@@ -39,28 +39,14 @@ namespace scrapmetalconsole
         public async Task<ISkuPropertyItem> Parse(ElementHandle elementHandle)
         {
             // For debug purposes only.
-            //Debug.WriteLine($"divHandle innerHTML = {await getElementHandleInnerHtml(elementHandle)}");
+            Debug.WriteLine($"elementHandle innerHTML = {await elementHandle.GetInnerHtmlAsync()}");
 
-            TextValue = await getElementHandleTextContent(elementHandle);
+            TextValue = await elementHandle.GetTextContentAsync();
 
             // For debug purposes only.
             Debug.WriteLine(TextValue);
 
             return this;
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private static async Task<string> getElementHandleInnerHtml(ElementHandle handle)
-        {
-            return await handle.EvaluateFunctionAsync<string>("e => e.innerHTML");
-        }
-
-        private static async Task<string> getElementHandleTextContent(ElementHandle handle)
-        {
-            return await handle.EvaluateFunctionAsync<string>("e => e.textContent");
         }
 
         #endregion

@@ -40,7 +40,7 @@ namespace scrapmetalconsole
             }
 
             // Try to check the current handle class name.
-            string className = await getElementHandleClassName(ElementHandle);
+            string className = await ElementHandle.GetClassNameAsync();
 
             if (className != "product-sku")
             {
@@ -62,14 +62,5 @@ namespace scrapmetalconsole
                 Properties.Add(skuProperty);
             }
         }
-
-        #region Private Methods
-
-        private static async Task<string> getElementHandleClassName(ElementHandle handle)
-        {
-            return await handle.EvaluateFunctionAsync<string>("e => e.className");
-        }
-
-        #endregion
     }
 }

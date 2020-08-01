@@ -31,7 +31,7 @@ namespace scrapmetalconsole
             // Get the child div of li.sku-property-item which could be 
             // div.sku-property-text or div.sku-property-image
             var divHandle = await elementHandle.QuerySelectorAsync("div");
-            string className = await getElementHandleClassName(divHandle);
+            string className = await divHandle.GetClassNameAsync();
 
             // For debug purposes only.
             Debug.WriteLine($"div className = {className}");
@@ -55,14 +55,5 @@ namespace scrapmetalconsole
                         string.Format("Item '{0}' cannot be created.", className));
             }
         }
-
-        #region Private Methods
-
-        private static async Task<string> getElementHandleClassName(ElementHandle handle)
-        {
-            return await handle.EvaluateFunctionAsync<string>("e => e.className");
-        }
-
-        #endregion
     }
 }
