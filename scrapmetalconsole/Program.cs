@@ -55,22 +55,47 @@ namespace scrapmetalconsole
                 // For debug purposes only.
                 Debug.WriteLine($"Store Name: {store.Name}");
                 Debug.WriteLine($"Store Link: {store.Link}");
+                Console.WriteLine($"Store Name: {store.Name}");
+                Console.WriteLine($"Store Link: {store.Link}");
 
-                Environment.Exit(0);
+                ProductInformation productInformation = await ProductInformation.CreateProductInformation(page);
 
-                // Wait for the page to load.
-                var productSkuSelector = @"#root > div > div.product-main > div > div.product-info > div.product-sku";
-                await page.WaitForSelectorAsync(productSkuSelector);
-
-                Product product = new Product();
-                product.Title = "S";
-
-                var productSkuHandle = await page.QuerySelectorAsync(productSkuSelector);
-                ProductSku productSku = new ProductSku(productSkuHandle);
-                await productSku.Parse();
+                logToConsole(productInformation);
             }
 
             Environment.Exit(0);
+        }
+
+        private static void logToConsole(ProductInformation productInformation)
+        {
+            // For debug purposes only.
+            Debug.WriteLine($"Product Information Title: {productInformation.TitleText}");
+            Debug.WriteLine($"Product Information Url: {productInformation.Url}");
+
+            Console.WriteLine($"Product Information Title: {productInformation.TitleText}");
+            Console.WriteLine($"Product Information Url: {productInformation.Url}");
+
+            if (productInformation.Sku != null)
+            {
+                foreach (var property in productInformation.Sku.Properties)
+                {
+                    Console.WriteLine($"{property.Title}");
+
+                    foreach (var item in property.PropertyList)
+                    {
+                        if (item.ClassName == "sku-property-text")
+                        {
+                            TextSkuPropertyItem propertyItem = item as TextSkuPropertyItem;
+                            Console.WriteLine($"\t{propertyItem.TextValue}");
+                        }
+                        else if (item.ClassName == "sku-property-image")
+                        {
+                            ImageSkuPropertyItem propertyItem = item as ImageSkuPropertyItem;
+                            Console.WriteLine($"\t{propertyItem.ImageTitle}: {propertyItem.ImageSource}");
+                        }
+                    }
+                }
+            }
         }
 
         static async Task<ProductPrice> GetProductPrice(Page page)

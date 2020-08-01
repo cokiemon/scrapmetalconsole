@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,16 +10,16 @@ namespace scrapmetalconsole
 {
     public class ProductSku
     {
+        #region Private Fields
+
+        private readonly string _localSelector = "div.product-sku";
+
+        #endregion
+
         #region Constructors
 
-        public ProductSku()
+        private ProductSku()
         {
-            Properties = new List<SkuProperty>();
-        }
-
-        public ProductSku(ElementHandle elementHandle)
-        {
-            ElementHandle = elementHandle;
             Properties = new List<SkuProperty>();
         }
 
@@ -26,32 +27,50 @@ namespace scrapmetalconsole
 
         #region Public Proeprties
 
-        public ElementHandle ElementHandle { get; private set; }
+        //public ElementHandle ElementHandle { get; private set; }
 
         public List<SkuProperty> Properties { get; set; }
 
         #endregion
 
-        public async Task Parse()
+        #region Public Methods
+
+        public static async Task<ProductSku> CreateProductSku(Page page)
         {
-            if (ElementHandle == null)
+            // Wait for element to load.
+            var selector = @"#root > div > div.product-main > div > div.product-info > div.product-sku";
+            await page.WaitForSelectorAsync(selector);
+
+            // Get store name selector.
+            var elementHandle = await page.QuerySelectorAsync(selector);
+
+            return await CreateProductSku(elementHandle);
+        }
+
+        public static async Task<ProductSku> CreateProductSku(ElementHandle elementHandle)
+        {
+            if (elementHandle == null)
             {
-                throw new InvalidOperationException("ElementHandle property is null.");
+                throw new ArgumentNullException(nameof(elementHandle));
             }
 
-            // Try to check the current handle class name.
-            string className = await ElementHandle.GetClassNameAsync();
+            // Lets make sure we got the right ElementHandle.
+            string className = await elementHandle.GetClassNameAsync();
 
             if (className != "product-sku")
             {
-                string message = "The element handle should be at sku-property.";
-                throw new InvalidOperationException(message);
+                string message = $"The argument {nameof(elementHandle)} does not have the right selector.";
+                throw new ArgumentException(message);
             }
 
+            // For debug purposes only.
+            Debug.WriteLine($"storeNameHandle innerHTML = {await elementHandle.GetInnerHtmlAsync()}");
+
             // Selector for a list of sku-property. Child of div.product-sku
-            //var asdasd = @"#root > div > div.product-main > div > div.product-info > div.product-sku > div > div:nth-child(1)";
             var skuPropertiesSelector = @"div > div.sku-property";
-            var skuPropertiesHandle = await ElementHandle.QuerySelectorAllAsync(skuPropertiesSelector);
+            var skuPropertiesHandle = await elementHandle.QuerySelectorAllAsync(skuPropertiesSelector);
+
+            ProductSku sku = new ProductSku();
 
             foreach (ElementHandle handle in skuPropertiesHandle)
             {
@@ -59,8 +78,12 @@ namespace scrapmetalconsole
                 await skuProperty.ParsePropertyTitle();
                 await skuProperty.ParsePropertyList();
 
-                Properties.Add(skuProperty);
+                sku.Properties.Add(skuProperty);
             }
+
+            return sku;
         }
+
+        #endregion
     }
 }
