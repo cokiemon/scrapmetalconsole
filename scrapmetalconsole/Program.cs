@@ -51,15 +51,9 @@ namespace scrapmetalconsole
                 }
 
                 // Wait for the page to load.
-                //var resultsSelector = ".gsc-results .gsc-thumbnail-inside a.gs-title";
-                var resultsSelector = ".product-price";
-                await page.WaitForSelectorAsync(resultsSelector);
-
-
-
-
-
                 var productSkuSelector = @"#root > div > div.product-main > div > div.product-info > div.product-sku";
+                await page.WaitForSelectorAsync(productSkuSelector);
+
                 var productSkuHandle = await page.QuerySelectorAsync(productSkuSelector);
                 ProductSku productSku = new ProductSku(productSkuHandle);
                 await productSku.Parse();
