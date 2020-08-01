@@ -50,10 +50,13 @@ namespace scrapmetalconsole
                     Environment.Exit(1);
                 }
 
-                Store store = await ParseStore(page);
+                Store store = await StoreFactory.CreateStore(page);
+
                 // For debug purposes only.
                 Debug.WriteLine($"Store Name: {store.Name}");
                 Debug.WriteLine($"Store Link: {store.Link}");
+
+                Environment.Exit(0);
 
                 // Wait for the page to load.
                 var productSkuSelector = @"#root > div > div.product-main > div > div.product-info > div.product-sku";
@@ -68,28 +71,6 @@ namespace scrapmetalconsole
             }
 
             Environment.Exit(0);
-        }
-
-        static async Task<Store> ParseStore(Page page)
-        {
-            // Wait for element to load.
-            var storeNameSelector = @"#store-info-wrap > div.store-container > h3";
-            await page.WaitForSelectorAsync(storeNameSelector);
-
-            // Get store name selector.
-            var storeNameHandle = await page.QuerySelectorAsync(storeNameSelector);
-
-            // For debug purposes only.
-            //Debug.WriteLine($"elementHandle innerHTML = {await storeNameHandle.GetInnerHtmlAsync()}");
-
-            // Get anchor.
-            var anchorHandle = await storeNameHandle.QuerySelectorAsync("a");
-
-            Store store = new Store();
-            store.Name = await anchorHandle.GetTextContentAsync();
-            store.Link = await anchorHandle.GetAttributeValueAsync("href");
-
-            return store;
         }
 
         static async Task<ProductPrice> GetProductPrice(Page page)
