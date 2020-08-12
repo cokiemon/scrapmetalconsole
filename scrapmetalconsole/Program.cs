@@ -51,29 +51,34 @@ namespace scrapmetalconsole
                 }
 
                 Store store = await StoreFactory.CreateStore(page);
-
-                // For debug purposes only.
-                Debug.WriteLine($"Store Name: {store.Name}");
-                Debug.WriteLine($"Store Link: {store.Link}");
-                Console.WriteLine($"Store Name: {store.Name}");
-                Console.WriteLine($"Store Link: {store.Link}");
+                logToConsole(store);
+                Console.WriteLine();
 
                 ProductInformation productInformation = await ProductInformation.CreateProductInformation(page);
-
                 logToConsole(productInformation);
             }
 
             Environment.Exit(0);
         }
 
+        private static void logToConsole(Store store)
+        {
+            // For debug purposes only.
+            Debug.WriteLine($"Store Name: {store.Name}");
+            Debug.WriteLine($"Store Link: {store.Link}");
+
+            Console.WriteLine($"Store Name: {store.Name}");
+            Console.WriteLine($"Store Link: {store.Link}");
+        }
+
         private static void logToConsole(ProductInformation productInformation)
         {
             // For debug purposes only.
-            Debug.WriteLine($"Product Information Title: {productInformation.TitleText}");
-            Debug.WriteLine($"Product Information Url: {productInformation.Url}");
+            Debug.WriteLine($"Title: {productInformation.TitleText}");
+            Debug.WriteLine($"Url: {productInformation.Url}");
 
-            Console.WriteLine($"Product Information Title: {productInformation.TitleText}");
-            Console.WriteLine($"Product Information Url: {productInformation.Url}");
+            Console.WriteLine($"Title: {productInformation.TitleText}");
+            Console.WriteLine($"Url: {productInformation.Url}");
 
             if (productInformation.Sku != null)
             {
